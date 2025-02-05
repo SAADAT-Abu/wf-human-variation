@@ -61,6 +61,31 @@ CHROMOSOME_SIZES = {
         'chr22': '50818468',
         'chrX': '156040895',
         'chrY': '57227415'}
+    'T2TCHM13v2': {
+        'chr1': '248387328',
+        'chr2': '242696752',
+        'chr3': '201105948',
+        'chr4': '193574945',
+        'chr5': '182045439',
+        'chr6': '172126628',
+        'chr7': '160567428',
+        'chr8': '146259331',
+        'chr9': '150617247',
+        'chr10': '134758134',
+        'chr11': '135127769',
+        'chr12': '133324548',
+        'chr13': '113566686',
+        'chr14': '101161492',
+        'chr15': '99753195',
+        'chr16': '96330374',
+        'chr17': '84276897',
+        'chr18': '80542538',
+        'chr19': '61707364',
+        'chr20': '66210255',
+        'chr21': '45090682',
+        'chr22': '51324926',
+        'chrX': '154259566',
+        'chrY': '62460029'}
 }
 
 
@@ -104,7 +129,7 @@ def check_genome(genome_build, str_flag):
         "#####################################################################\n"
         "# INPUT DATA PROBLEM\n"
         "The genome build detected in the BAM is not compatible with this\n"
-        "workflow as it does not appear to be hg19/GRCh37 or hg38/GRCh38.\n"
+        "workflow as it does not appear to be hg19/GRCh37, hg38/GRCh38 or T2TCHM13v2.\n"
         "If you are trying to run this workflow with non-human data, please\n"
         "consult the 'Genome compatibility and running the workflow on\n"
         "non-human genomes' section of the README.\n"
