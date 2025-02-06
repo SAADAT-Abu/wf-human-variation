@@ -62,37 +62,43 @@ CHROMOSOME_SIZES = {
         'chrX': '156040895',
         'chrY': '57227415'},
     'T2T': {
-        'chr1': '248387328',
-        'chr2': '242696752',
-        'chr3': '201105948',
-        'chr4': '193574945',
-        'chr5': '182045439',
-        'chr6': '172126628',
-        'chr7': '160567428',
-        'chr8': '146259331',
-        'chr9': '150617247',
-        'chr10': '134758134',
-        'chr11': '135127769',
-        'chr12': '133324548',
-        'chr13': '113566686',
-        'chr14': '101161492',
-        'chr15': '99753195',
-        'chr16': '96330374',
-        'chr17': '84276897',
-        'chr18': '80542538',
-        'chr19': '61707364',
-        'chr20': '66210255',
-        'chr21': '45090682',
-        'chr22': '51324926',
-        'chrX': '154259566',
-        'chrY': '62460029'}
+        'NC_060925.1': '248387328',
+        'NC_060926.1': '242696752',
+        'NC_060927.1': '201105948',
+        'NC_060928.1': '193574945',
+        'NC_060929.1': '182045439',
+        'NC_060930.1': '172126628',
+        'NC_060931.1': '160567428',
+        'NC_060932.1': '146259331',
+        'NC_060933.1': '150617247',
+        'NC_060934.1': '134758134',
+        'NC_060935.1': '135127769',
+        'NC_060936.1': '133324548',
+        'NC_060937.1': '113566686',
+        'NC_060938.1': '101161492',
+        'NC_060939.1': '99753195',
+        'NC_060940.1': '96330374',
+        'NC_060941.1': '84276897',
+        'NC_060942.1': '80542538',
+        'NC_060943.1': '61707364',
+        'NC_060944.1': '66210255',
+        'NC_060945.1': '45090682',
+        'NC_060946.1': '51324926',
+        'NC_060947.1': '154259566',
+        'NC_060948.1': '62460029'}
 }
+
 
 
 ALLOWED_CHR = [
     "chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9",
     "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17",
-    "chr18", "chr19", "chr20", "chr21", "chr22", "chrX", "chrY"
+    "chr18", "chr19", "chr20", "chr21", "chr22", "chrX", "chrY", 
+    "NC_060925.1", "NC_060926.1", "NC_060927.1", "NC_060928.1", "NC_060929.1",
+    "NC_060930.1", "NC_060931.1", "NC_060932.1", "NC_060933.1", "NC_060934.1",
+    "NC_060935.1", "NC_060936.1", "NC_060937.1", "NC_060938.1", "NC_060939.1",
+    "NC_060940.1", "NC_060941.1", "NC_060942.1", "NC_060943.1", "NC_060944.1",
+    "NC_060945.1", "NC_060946.1", "NC_060947.1", "NC_060948.1"
 ]
 
 
@@ -103,12 +109,11 @@ def chromosome_sizes(extracted_sizes):
         for line in fa_idx:
             line = line.rstrip()
             cols = line.split('\t')
-            # prepend 'chr' if needed
-            if not cols[0].startswith('chr'):
-                cols[0] = "chr"+cols[0]
-            if cols[0] in ALLOWED_CHR:
+            # Do not prepend 'chr' for T2T chromosomes
+            if cols[0] in CHROMOSOME_SIZES['T2T'] or cols[0].startswith("NC_"):
+                fasta_sizes[cols[0]] = cols[1]  # Ensure string format
+            elif cols[0] in ALLOWED_CHR:
                 fasta_sizes[cols[0]] = cols[1]
-
     return fasta_sizes
 
 
@@ -117,10 +122,9 @@ def get_genome(sizes):
     if not sizes:
         return ""
     for known_genome_build in CHROMOSOME_SIZES.keys():
-        if sizes.items() <= CHROMOSOME_SIZES[known_genome_build].items():
+        if sizes == CHROMOSOME_SIZES[known_genome_build]:  # Ensure exact match
             return known_genome_build
     return ""
-
 
 def check_genome(genome_build, str_flag):
     """Determine if genome is suitable for this workflow."""
