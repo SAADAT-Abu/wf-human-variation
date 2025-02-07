@@ -38,8 +38,11 @@ process make_chunks {
         // Define T2T chromosome mapping
  // Run get_genome.py to determine genome build dynamically
 def genome_build = "GRCh38" // Default value
+
 try {
-    genome_build = "bash get_genome.py".execute().text.trim()
+    def process = ["python3", "bin/get_genome.py"].execute() // Corrected path & call
+    process.waitFor() // Ensures process completes before reading output
+    genome_build = process.text.trim()
 } catch (Exception e) {
     log.warn "Warning: Could not determine genome build automatically. Defaulting to GRCh38."
 }
