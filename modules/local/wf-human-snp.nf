@@ -36,7 +36,8 @@ process make_chunks {
         def vcfprnt = genotyping_vcf.baseName != "OPTIONAL_FILE" ? "--vcf_fn=${genotyping_vcf}" : ""
         // Define contigs in order to enforce the mitochondrial genome calling, which is otherwise skipped.
         // Define T2T chromosome mapping
-    def t2t_map = [
+ // Define T2T chromosome mapping
+def t2t_map = [
     '1': 'NC_060925.1', '2': 'NC_060926.1', '3': 'NC_060927.1', '4': 'NC_060928.1',
     '5': 'NC_060929.1', '6': 'NC_060930.1', '7': 'NC_060931.1', '8': 'NC_060932.1',
     '9': 'NC_060933.1', '10': 'NC_060934.1', '11': 'NC_060935.1', '12': 'NC_060936.1',
@@ -45,21 +46,22 @@ process make_chunks {
     '21': 'NC_060945.1', '22': 'NC_060946.1', 'X': 'NC_060947.1', 'Y': 'NC_060948.1'
 ]
 
-// Convert chromosome names if using T2T genome
-if (params.genome_build == "T2T") {
-    chromosome_codes = chromosome_codes.collect { t2t_map[it] ?: it } // Replace if found
+// Create a new list for T2T-compatible chromosome names
+def t2t_chromosomes = (params.genome_build == "T2T") ? chromosome_codes.collect { t2t_map[it] ?: it } : chromosome_codes
+
+// Convert to a string for processing
+String ctgs = t2t_chromosomes.join(',')
+def ctg_name = "--ctg_name ${ctgs}"
+
+// If a single contig is required, then set it as option
+if (params.ctg_name){
+    ctg_name = "--ctg_name ${params.ctg_name}"
 }
 
-String ctgs = chromosome_codes.join(',')
-def ctg_name = "--ctg_name ${ctgs}"
-        // If a single contig is required, then set it as option
-        if (params.ctg_name){
-            ctg_name = "--ctg_name ${params.ctg_name}"
-        }
-        // If all contigs are required, then set the ctg_name to EMPTY
-        if (params.include_all_ctgs || bed.name != 'OPTIONAL_FILE'){
-            ctg_name = '--ctg_name "EMPTY"'
-        }
+// If all contigs are required, then set the ctg_name to EMPTY
+if (params.include_all_ctgs || bed.name != 'OPTIONAL_FILE'){
+    ctg_name = '--ctg_name "EMPTY"'
+}
         """
         # CW-2456: save command line to add to VCF file (very long command...)
         mkdir -p clair_output/tmp
