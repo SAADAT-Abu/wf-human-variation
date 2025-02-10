@@ -15,6 +15,11 @@ process callCNV {
         tuple val(xam_meta), path("spectre_output/predicted_karyotype.txt"), emit: spectre_karyotype
     script:
         def spectre_args = params.spectre_args ?: ''
+        
+        // Determine blacklist and metadata files based on genome version
+        def blacklist_file = (genome_build == "T2T") ? "resources/T2T_blacklist.bed" : "${genome_build}_blacklist_v1.0"
+        def metadata_file = (genome_build == "T2T") ? "resources/T2T_metadata" : "${genome_build}_metadata"
+        
         """
         spectre CNVCaller \
         --bin-size 1000 \
@@ -22,9 +27,9 @@ process callCNV {
         --sample-id ${xam_meta.alias} \
         --output-dir spectre_output/ \
         --reference ${ref} \
-        --blacklist ${genome_build}_blacklist_v1.0 \
+        --blacklist ${blacklist_file} \
         --snv ${vcf} \
-        --metadata ${genome_build}_metadata \
+        --metadata ${metadata_file} \
         $spectre_args
         """
 }
